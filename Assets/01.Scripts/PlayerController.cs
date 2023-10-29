@@ -7,9 +7,12 @@ public class PlayerController : MonoBehaviour
 {
     public event Action UpdateAction;
 
-    void Start()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        EnemyController enemy;
+        collision.gameObject.TryGetComponent<EnemyController>(out enemy);
+
+        enemy.PushEnemy();
     }
 
     void Update()

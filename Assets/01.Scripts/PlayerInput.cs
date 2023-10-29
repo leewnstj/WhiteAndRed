@@ -13,7 +13,7 @@ public class PlayerInput : MonoBehaviour
     private PlayerController _controller;
 
     private Vector2 _mousePos;
-    public Vector2 _pos;
+    private Vector2 _pos;
 
     private void Awake()
     {

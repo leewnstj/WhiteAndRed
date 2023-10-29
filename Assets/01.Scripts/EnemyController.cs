@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnemyController : PoolableMono
 {
-    [SerializeField] private float _speed;
 
+    [SerializeField] private float _speed;
 
     private void Update()
     {
@@ -13,17 +13,13 @@ public class EnemyController : PoolableMono
 
         if(transform.position == Vector3.zero )
         {
-            PoolManager.Instance.Push(this);
+            PushEnemy();
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void PushEnemy()
     {
-        if(collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("sdf");
-            PoolManager.Instance.Push(this);
-        }
+        PoolManager.Instance.Push(this);
     }
 
     public override void Init()
