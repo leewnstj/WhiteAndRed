@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : PoolableMono
+public class EnemyController : PoolableMono
 {
     [SerializeField] private float _speed;
 
@@ -13,7 +13,16 @@ public class Enemy : PoolableMono
 
         if(transform.position == Vector3.zero )
         {
+            PoolManager.Instance.Push(this);
+        }
+    }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("sdf");
+            PoolManager.Instance.Push(this);
         }
     }
 
