@@ -7,6 +7,7 @@ using DG.Tweening;
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private float _radius;
+    public float Radius => _radius;
 
     private PlayerInput _input;
     private PlayerController _controller;
