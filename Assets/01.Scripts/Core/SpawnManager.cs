@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private float _coolTime;
     public static SpawnManager Instance;
 
+    [SerializeField] private EnemySpawnSO _so;
+    [SerializeField] private float _coolTime;
+
+    private Spawn _spawn;
     private float _currentTime;
 
     private void Awake()
@@ -14,36 +17,31 @@ public class SpawnManager : MonoBehaviour
         if (Instance != null) Debug.LogError("SpawnManager is NULL");
         Instance = this;
 
-        _currentTime = _coolTime;
-    }
+        _spawn = GameObject.Find("SpawnPoint").GetComponent<Spawn>();
 
-    public Vector2 SpawnPoint()
-    {
-        Vector3 value = Random.insideUnitCircle * 7;
-        Vector2 point = value.magnitude * value;
-
-        if (point.x >= -24f && point.x <= 24f && point.y <= 13.5f && point.y >= -13.5f)
-        {
-            
-        }
-
-        return point;
+        _currentTime = _so.CoolTime;
     }
 
     private void Update()
     {
         if(_currentTime < 0)
         {
-            _currentTime = _coolTime;
+            _currentTime = _so.CoolTime;
             SpawnEnemy();
         }
         _currentTime -= Time.deltaTime;
+    }
+
+    private void GameSpawnAdd()
+    {
+
     }
 
     private void SpawnEnemy()
     {
         EnemyController enemy = PoolManager.Instance.Pop("Enemy") as EnemyController;
 
-        enemy.transform.position = SpawnPoint();
+        enemy.transform.position = _spawn.SpawnPoint();
+        enemy.Enemy(_so.Speed);
     }
 }

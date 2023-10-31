@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class EnemyController : PoolableMono
 {
+    private float _speed;
 
-    [SerializeField] private float _speed;
+    public void Enemy(float value)
+    {
+        _speed = value;
+    }
 
     private void Update()
     {
