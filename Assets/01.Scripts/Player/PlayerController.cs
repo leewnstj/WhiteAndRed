@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool PerfectSocre;
+
     public event Action UpdateAction;
     private PlayerMove _playerMove;
+    private ScoreSystem _scoreSystem;
 
     private void Awake()
     {
         _playerMove = GetComponent<PlayerMove>();
+        _scoreSystem = GameObject.Find("GameManager").GetComponent<ScoreSystem>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -23,6 +27,12 @@ public class PlayerController : MonoBehaviour
         if(dis >= _playerMove.Radius)
         {
             UIManager.Instance.TextOut("PERFECT", 1f);
+
+            _scoreSystem.Score += 2;
+        }
+        else
+        {
+            _scoreSystem.Score++;
         }
 
         enemy.PushEnemy();

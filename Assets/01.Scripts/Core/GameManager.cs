@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+
+    public int Score = 0;
+    public int BestScore = 0;
 
     [SerializeField] private PoolingableSO _poolingList;
 
