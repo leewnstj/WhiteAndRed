@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public bool PerfectSocre;
-
     public event Action UpdateAction;
     private PlayerMove _playerMove;
     private ScoreSystem _scoreSystem;
