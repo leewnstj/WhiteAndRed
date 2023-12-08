@@ -29,7 +29,7 @@ public class FirebaseManager : MonoBehaviour
 
     public static FirebaseManager Instance;
 
-    public string Errortex;
+    public string Errortex { get; set; }
 
     private void Awake()
     {
