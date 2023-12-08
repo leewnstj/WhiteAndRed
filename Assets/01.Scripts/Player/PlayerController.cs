@@ -7,33 +7,30 @@ public class PlayerController : MonoBehaviour
 {
     public event Action UpdateAction;
     private PlayerMove _playerMove;
-    private ScoreSystem _scoreSystem;
 
     private void Awake()
     {
         _playerMove = GetComponent<PlayerMove>();
-        _scoreSystem = GameObject.Find("GameManager").GetComponent<ScoreSystem>();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         EnemyController enemy;
         collision.gameObject.TryGetComponent<EnemyController>(out enemy);
-
         float dis = Vector2.Distance(Vector2.zero, enemy.transform.position);
+        
+        enemy.PushEnemy();
 
-        if(dis >= _playerMove.Radius)
+        if (dis >= _playerMove.Radius)
         {
-            UIManager.Instance.TextOut("PERFECT", 1f);
+            UIManager.Instance.MessageTextOut("PERFECT", 1f);
 
-            _scoreSystem.Score += 2;
+            GameManager.Instance.Score += 2;
         }
         else
         {
-            _scoreSystem.Score++;
+            GameManager.Instance.Score++;
         }
-
-        enemy.PushEnemy();
     }
 
     void Update()

@@ -28,7 +28,7 @@ public class PlayerInput : MonoBehaviour
     {
         _mousePos = Input.mousePosition;
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !GameManager.Instance.GameOver)
         {
             _pos = _cam.ScreenToWorldPoint(_mousePos);
             PressKeyAction?.Invoke(_pos);

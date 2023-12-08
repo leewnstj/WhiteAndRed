@@ -4,31 +4,53 @@ using TMPro;
 using UnityEngine;
 using DG.Tweening;
 
-public class UIManager : MonoBehaviour
+public class UIManager : SingleTon<UIManager>
 {
-    public static UIManager Instance;
-    private TextMeshProUGUI _text;
+    private TextMeshProUGUI _messgaeText;
+    private TextMeshProUGUI _scoreText;
+    private TextMeshProUGUI _gameOverText;
 
     private void Awake()
     {
-        if (Instance != null) Debug.LogError("UIManager is not NULL");
-        Instance = this;
+        _messgaeText = transform.Find("Message").GetComponent<TextMeshProUGUI>();
+        _scoreText = transform.Find("Score").GetComponent<TextMeshProUGUI>();
+        _gameOverText = transform.Find("GameOver").GetComponent<TextMeshProUGUI>();
 
-        _text = transform.Find("Message").GetComponent<TextMeshProUGUI>();
+        GameManager.Instance.OnGameOverEvent += GameOverTextOut;
     }
 
-    public void TextOut(string content, float time)
+    public void MessageTextOut(string content, float time)
     {
-        _text.alpha = 0.2f;
-        _text.text = content;
+        _messgaeText.alpha = 0.2f;
+        _messgaeText.text = content;
 
         StartCoroutine(AlphaDown(time));
+    }
+
+    public void ScoreTextOut(int content)
+    {
+        _scoreText.alpha = 1f;
+        _scoreText.text = $"{content}";
+    }
+
+    public void GameOverTextOut()
+    {
+        StopAllCoroutines();
+        _gameOverText.alpha = 0f;
+        _gameOverText.DOFade(1f, 1f);
     }
 
     private IEnumerator AlphaDown(float time)
     {
         yield return new WaitForSeconds(time);
 
-        _text.DOFade(0, time);
+        _messgaeText.DOFade(0, time);
+    }
+
+    private IEnumerator AlphaUp(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        _messgaeText.DOFade(1, time);
     }
 }

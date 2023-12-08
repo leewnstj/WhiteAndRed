@@ -2,46 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class SpawnManager : SingleTon<SpawnManager>
 {
-    public static SpawnManager Instance;
-
-    [SerializeField] private EnemySpawnSO _so;
-    [SerializeField] private float _coolTime;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _cool;
+    [SerializeField] private float _addSpeedValue;
+    [SerializeField] private float _addTimeValue;
 
     private Spawn _spawn;
     private float _currentTime;
 
     private void Awake()
     {
-        if (Instance != null) Debug.LogError("SpawnManager is NULL");
-        Instance = this;
-
         _spawn = GameObject.Find("SpawnPoint").GetComponent<Spawn>();
 
-        _currentTime = _so.CoolTime;
+        _currentTime = _cool;
     }
 
     private void Update()
-    {
-        if(_currentTime < 0)
+    {   
+        if (!GameManager.Instance.GameOver)
         {
-            _currentTime = _so.CoolTime;
-            SpawnEnemy();
+            if (_currentTime < 0)
+            {
+                _currentTime = _cool;
+
+                SpawnEnemy();
+            }
+            _currentTime -= Time.deltaTime;
         }
-        _currentTime -= Time.deltaTime;
-    }
-
-    private void GameSpawnAdd()
-    {
-
     }
 
     private void SpawnEnemy()
     {
         EnemyController enemy = PoolManager.Instance.Pop("Enemy") as EnemyController;
-
         enemy.transform.position = _spawn.SpawnPoint();
-        enemy.Enemy(_so.Speed);
+        enemy.Enemy(_speed);
+
+        _speed += _addSpeedValue;
+
+        if(_cool >= 1f)
+        _cool -= _addTimeValue;
     }
 }

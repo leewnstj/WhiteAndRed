@@ -22,17 +22,28 @@ public class PlayerMove : MonoBehaviour
         _controller.UpdateAction += DrawUpdate;
         _input.PressKeyAction += PressKey;
         _input.ReleaseKeyAction += ReleaseKey;
+
+        GameManager.Instance.OnGameOverEvent += GameOverDrawLine;
     }
+    #region 라인 그리기
 
     private void DrawUpdate()
     {
-        _line.DrawCircle(300, _radius);
+        _line.DrawCircle(400, _radius);
     }
+
+    private void GameOverDrawLine()
+    {
+        _controller.UpdateAction -= DrawUpdate;
+        _line.DrawCircle(400, 2f);
+    }
+
+    #endregion
 
     public void PressKey(Vector2 pos)
     {
         transform.position = pos;
-        
+
         transform.position = Vector2.ClampMagnitude((Vector2)transform.position, _radius);
     }
 
