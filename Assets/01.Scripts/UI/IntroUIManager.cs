@@ -132,11 +132,9 @@ public class IntroUIManager : MonoBehaviour
 
         _seq.Append(_titleText.DOFade(0, 1))
             .Join(_titleRedText.DOFade(0, 1f))
-            .Join(_loginBtn.DOFade(0,1))
-            .Join(_signBtn.DOFade(0, 1))
-            .OnComplete(() =>
-            {
-                SceneManager.LoadScene(SceneList.Setting);
-            });
+            .Join(_loginBtn.DOFade(0, 1))
+            .Join(_signBtn.DOFade(0, 1));
+
+        SceneManager.LoadScene(SceneList.Main);
     }
 }
