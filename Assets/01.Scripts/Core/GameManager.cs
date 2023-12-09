@@ -11,11 +11,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : SingleTon<GameManager>
 {
-    private DatabaseReference databaseReference;
-    private FirebaseUser user;
-
     #region Data
     [SerializeField] private PoolingableSO _poolingList;
+
     //인게임 스코어
     private int _curScore = 0;
     public int Score
@@ -36,7 +34,7 @@ public class GameManager : SingleTon<GameManager>
         set
         {
             _curBest = value;
-            SaveBestScore(_curBest);
+            FirebaseManager.Instance.UserScore(_curBest);
         }
     }
 
@@ -59,20 +57,6 @@ public class GameManager : SingleTon<GameManager>
 
     private void Awake()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
-        {
-            FirebaseApp app = FirebaseApp.DefaultInstance;
-            if (app == null)
-            {
-                Debug.LogError("Firebase initialization failed.");
-            }
-            else
-            {
-                databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-                Debug.Log("Firebase initialized successfully.");
-            }
-        });
-
         MakePool();
         OnGameOverEvent += ScoreReset;
     }
@@ -92,32 +76,6 @@ public class GameManager : SingleTon<GameManager>
             _curScore = 0;
             Debug.Log($"{BestScore} , {_curScore}");
             SceneManager.LoadScene(SceneList.Main);
-        }
-    }
-
-    private void SaveBestScore(int newBestScore)
-    {
-        if (databaseReference != null)
-        {
-            // Firebase에 BestScore 저장
-            databaseReference.Child("users").Child(user.UserId).Child("BestScore").SetValueAsync(newBestScore)
-                .ContinueWithOnMainThread(task =>
-                {
-                    if (task.IsFaulted)
-                    {
-                        // 저장 실패 처리
-                        Debug.LogError("Error saving BestScore to Firebase: " + task.Exception);
-                    }
-                    else if (task.IsCompleted)
-                    {
-                        // 저장 성공 처리
-                        Debug.Log("BestScore saved to Firebase successfully.");
-                    }
-                });
-        }
-        else
-        {
-            Debug.Log("DB is NULL");
         }
     }
 }

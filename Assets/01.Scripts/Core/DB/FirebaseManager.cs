@@ -14,18 +14,19 @@ public delegate void CreateAccountEvent(bool success);
 public class FirebaseUserData
 {
 
-    public string userName;
+    public string UserName;
+    public int UserScore;
 
 }
 
 public class FirebaseManager : MonoBehaviour
 {
-    private FirebaseAuth auth;
-    private FirebaseUser user;
-    private DatabaseReference db;
+    private FirebaseAuth _auth;
+    private FirebaseUser _user;
+    private DatabaseReference _db;
 
     public bool IsAuthError { get; private set; }
-    public FirebaseUserData userData { get; private set; }
+    public FirebaseUserData UserData { get; private set; }
 
     public static FirebaseManager Instance;
 
@@ -34,6 +35,8 @@ public class FirebaseManager : MonoBehaviour
     private void Awake()
     {
         StartAuth();
+
+        DontDestroyOnLoad(this);
     }
 
     public void StartAuth()
@@ -46,8 +49,8 @@ public class FirebaseManager : MonoBehaviour
             if (dependencyStatus == DependencyStatus.Available)
             {
 
-                auth = FirebaseAuth.DefaultInstance;
-                db = FirebaseDatabase.DefaultInstance.RootReference;
+                _auth = FirebaseAuth.DefaultInstance;
+                _db = FirebaseDatabase.DefaultInstance.RootReference;
 
             }
             else
@@ -60,7 +63,6 @@ public class FirebaseManager : MonoBehaviour
             }
 
         });
-
     }
 
     public async void Login(string email, string password, LoginEvent loginEvent)
@@ -69,10 +71,10 @@ public class FirebaseManager : MonoBehaviour
         try
         {
 
-            var res = await auth.SignInWithEmailAndPasswordAsync(email, password);
-            user = res.User;
+            var res = await _auth.SignInWithEmailAndPasswordAsync(email, password);
+            _user = res.User;
 
-            loginEvent?.Invoke(true, user);
+            loginEvent?.Invoke(true, _user);
 
         }
         catch (Exception ex)
@@ -92,9 +94,9 @@ public class FirebaseManager : MonoBehaviour
         try
         {
 
-            var res = await auth.CreateUserWithEmailAndPasswordAsync(email, password);
+            var res = await _auth.CreateUserWithEmailAndPasswordAsync(email, password);
 
-            user = res.User;
+            _user = res.User;
 
             if (login)
             {
@@ -140,36 +142,62 @@ public class FirebaseManager : MonoBehaviour
     {
 
 
-        if (user == null) return;
+        if (_user == null) return;
 
-        userData = new FirebaseUserData { userName = userName };
+        UserData = new FirebaseUserData { UserName = userName };
 
-        db.Child("users").Child(user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(userData));
+        _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
 
+    }
+
+    public void UserScore(int score)
+    {
+        if (_user == null)
+        {
+            Debug.Log("NULL");
+            return;
+        }
+
+        UserData = new FirebaseUserData { UserScore = score };
+
+        _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
     }
 
     public async Task LoadUserdata()
     {
 
-        if (user == null) return;
+        if (_user == null) return;
 
-        var res = await db.Child("users").Child(user.UserId).Child("UserData").GetValueAsync();
+        var res = await _db.Child("users").Child(_user.UserId).Child("UserData").GetValueAsync();
 
         if (res != null && res.Value != null)
         {
 
-            userData = JsonUtility.FromJson<FirebaseUserData>(res.Value.ToString());
+            UserData = JsonUtility.FromJson<FirebaseUserData>(res.Value.ToString());
 
         }
 
     }
 
+    public async Task<List<FirebaseUserData>> LoadAllUserData()
+    {
+        var res = await _db.Child("users").GetValueAsync();
+        List<FirebaseUserData> list = new List<FirebaseUserData>();
+
+        foreach (var data in res.Children)
+        {
+            list.Add(JsonUtility.FromJson<FirebaseUserData>(data.Child("UserData").Value.ToString()));            
+        }
+
+        return list;
+    }
+
     public void SaveUserData()
     {
 
-        if (user == null) return;
+        if (_user == null) return;
 
-        db.Child("users").Child(user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(userData));
+        _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
 
     }
 }

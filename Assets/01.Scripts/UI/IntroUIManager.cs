@@ -135,6 +135,6 @@ public class IntroUIManager : MonoBehaviour
             .Join(_loginBtn.DOFade(0, 1))
             .Join(_signBtn.DOFade(0, 1));
 
-        SceneManager.LoadScene(SceneList.Main);
+        SceneManager.LoadScene(SceneList.Setting);
     }
 }

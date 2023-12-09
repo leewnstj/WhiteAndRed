@@ -792,8 +792,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolingList: {fileID: 11400000, guid: f1667fccc74bc404eb474bc0dba8ccd8, type: 2}
-  _curScore: 0
-  BestScore: 0
 --- !u!114 &566748196
 MonoBehaviour:
   m_ObjectHideFlags: 0
