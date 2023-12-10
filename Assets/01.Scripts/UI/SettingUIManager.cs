@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -56,7 +57,7 @@ public class SettingUIManager : MonoBehaviour
     private async void LoadAndDisplayAllUserData()
     {
         var res = await _firebaseManager.LoadAllUserData();
-        res.OrderBy(x => x.userScore);
+        res = res.OrderByDescending(x => x.userScore).ToList();
         int i = 0;
 
         foreach(var data in res)

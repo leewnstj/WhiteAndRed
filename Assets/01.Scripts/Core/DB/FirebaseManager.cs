@@ -16,6 +16,7 @@ public class FirebaseUserData
 
     public string userName;
     public int userScore;
+    public string lastLoginTime;
 
 }
 
@@ -143,7 +144,6 @@ public class FirebaseManager : MonoBehaviour
     public void CreateUserData(string userName)
     {
 
-
         if (_user == null) return;
 
         UserData = new FirebaseUserData { userName = userName };
@@ -154,17 +154,25 @@ public class FirebaseManager : MonoBehaviour
 
     public void UserScore(int score)
     {
-
-        Debug.Log(123);
-
         if (_user == null)
         {
             Debug.Log("NULL");
             return;
         }
-
-        Debug.Log(UserData.userName);
         UserData.userScore = score;
+
+        SaveUserData();
+
+    }
+
+    public void LastLoginTime(string time)
+    {
+        if (_user == null)
+        {
+            Debug.Log("NULL");
+            return;
+        }
+        UserData.lastLoginTime = time;
 
         SaveUserData();
 
@@ -195,7 +203,6 @@ public class FirebaseManager : MonoBehaviour
         {
             list.Add(JsonUtility.FromJson<FirebaseUserData>(data.Child("UserData").Value.ToString()));            
         }
-        Debug.Log(list);
         return list;
     }
 

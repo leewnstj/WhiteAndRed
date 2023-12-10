@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Firebase.Auth;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -100,7 +101,7 @@ public class IntroUIManager : MonoBehaviour
         }
     }
 
-    private void HandleLoginEnd(bool success, FirebaseUser user)
+    private async void HandleLoginEnd(bool success, FirebaseUser user)
     {
         if(!success)
         {
@@ -108,6 +109,9 @@ public class IntroUIManager : MonoBehaviour
         }
         else
         {
+
+            await FirebaseManager.Instance.LoadUserdata();
+            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("MM/dd/yyyy H:mm"));
             SceneMove();
         }
     }
@@ -119,6 +123,7 @@ public class IntroUIManager : MonoBehaviour
         }
         else
         {
+            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("MM/dd/yyyy H:mm"));
             SceneMove();
         }
     }
@@ -135,6 +140,6 @@ public class IntroUIManager : MonoBehaviour
             .Join(_loginBtn.DOFade(0, 1))
             .Join(_signBtn.DOFade(0, 1));
 
-        SceneManager.LoadScene(SceneList.Setting);
+        SceneManager.LoadScene(SceneList.Main);
     }
 }
