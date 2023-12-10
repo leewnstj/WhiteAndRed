@@ -13,7 +13,7 @@ public class DrawLine : MonoBehaviour
 
     public void DrawCircle(int steps, float radius)
     {
-        _lineRender.loop = true;  // Cela ferme le cercle
+        _lineRender.loop = true;
         _lineRender.positionCount = steps;
 
         float angle = 0f;

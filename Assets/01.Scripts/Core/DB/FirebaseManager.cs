@@ -14,8 +14,8 @@ public delegate void CreateAccountEvent(bool success);
 public class FirebaseUserData
 {
 
-    public string UserName;
-    public int UserScore;
+    public string userName;
+    public int userScore;
 
 }
 
@@ -27,6 +27,8 @@ public class FirebaseManager : MonoBehaviour
 
     public bool IsAuthError { get; private set; }
     public FirebaseUserData UserData { get; private set; }
+
+    public string day { get; private set; }
 
     public static FirebaseManager Instance;
 
@@ -144,7 +146,7 @@ public class FirebaseManager : MonoBehaviour
 
         if (_user == null) return;
 
-        UserData = new FirebaseUserData { UserName = userName };
+        UserData = new FirebaseUserData { userName = userName };
 
         _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
 
@@ -152,15 +154,20 @@ public class FirebaseManager : MonoBehaviour
 
     public void UserScore(int score)
     {
+
+        Debug.Log(123);
+
         if (_user == null)
         {
             Debug.Log("NULL");
             return;
         }
 
-        UserData = new FirebaseUserData { UserScore = score };
+        Debug.Log(UserData.userName);
+        UserData.userScore = score;
 
-        _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
+        SaveUserData();
+
     }
 
     public async Task LoadUserdata()
@@ -181,14 +188,14 @@ public class FirebaseManager : MonoBehaviour
 
     public async Task<List<FirebaseUserData>> LoadAllUserData()
     {
-        var res = await _db.Child("users").GetValueAsync();
         List<FirebaseUserData> list = new List<FirebaseUserData>();
+        var res = await _db.Child("users").GetValueAsync();
 
         foreach (var data in res.Children)
         {
             list.Add(JsonUtility.FromJson<FirebaseUserData>(data.Child("UserData").Value.ToString()));            
         }
-
+        Debug.Log(list);
         return list;
     }
 
@@ -200,4 +207,11 @@ public class FirebaseManager : MonoBehaviour
         _db.Child("users").Child(_user.UserId).Child("UserData").SetValueAsync(JsonUtility.ToJson(UserData));
 
     }
+
+    public async Task DayCheck()
+    {
+        var res = await _db.Child("Christmas").GetValueAsync();;
+        day = res.Value.ToString();
+    }
+
 }

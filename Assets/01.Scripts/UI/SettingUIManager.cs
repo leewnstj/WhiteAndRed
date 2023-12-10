@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,10 @@ using UnityEngine.SceneManagement;
 public class SettingUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject _leaderBoardPanel;
-    [SerializeField] private TextMeshProUGUI _curScoreTex;
-    [SerializeField] private TextMeshProUGUI _bestScoreTex;
 
     [SerializeField] private GameObject[] _objArr;
+
+    [SerializeField] private GameObject _dayEventObj;
 
     private TextMeshProUGUI[] _nameTex;
     private TextMeshProUGUI[] _scoreTex;
@@ -20,7 +21,6 @@ public class SettingUIManager : MonoBehaviour
 
     private void Awake()
     {
-        _leaderBoardPanel.SetActive(false);
         #region Firebase
         _firebaseManager = FirebaseManager.Instance;
 
@@ -43,12 +43,8 @@ public class SettingUIManager : MonoBehaviour
             _scoreTex[i] = _objArr[i].transform.Find("Score").GetComponent<TextMeshProUGUI>();
         }
         #endregion
-    }
 
-    private void Start()
-    {
-        _curScoreTex.text = GameManager.Instance.Score.ToString();
-        _curScoreTex.text = GameManager.Instance.BestScore.ToString();
+        DayCheck();
     }
 
     private void LeaderBoardUI(string userName, int score, int index)
@@ -60,16 +56,26 @@ public class SettingUIManager : MonoBehaviour
     private async void LoadAndDisplayAllUserData()
     {
         var res = await _firebaseManager.LoadAllUserData();
-        res.OrderBy(x => x.UserScore);
-
+        res.OrderBy(x => x.userScore);
         int i = 0;
 
         foreach(var data in res)
         {
-            LeaderBoardUI(data.UserName, data.UserScore, i);
+            LeaderBoardUI(data.userName, data.userScore, i);
             i++;
         }
     }
+
+    private async void DayCheck()
+    {
+        await _firebaseManager.DayCheck();
+
+        if(DateTime.Now.ToString("MM-dd") == _firebaseManager.day)
+        {
+            _dayEventObj.SetActive(true);
+        }
+    }
+
     #region Button Event
     public void BtnOn()
     {

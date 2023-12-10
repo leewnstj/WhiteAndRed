@@ -16,7 +16,6 @@ public class CameraManager : SingleTon<CameraManager>
 
     public void ShakeCamera(float value, float time)
     {
-        Debug.Log(value);
         StartCoroutine(Shaking(value, time));
     }
 

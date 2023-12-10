@@ -15,7 +15,7 @@ public class GameManager : SingleTon<GameManager>
     [SerializeField] private PoolingableSO _poolingList;
 
     //인게임 스코어
-    private int _curScore = 0;
+    private int _curScore;
     public int Score
     {
         get{ return _curScore; }
@@ -74,8 +74,8 @@ public class GameManager : SingleTon<GameManager>
         {
             BestScore = _curScore;
             _curScore = 0;
-            Debug.Log($"{BestScore} , {_curScore}");
-            SceneManager.LoadScene(SceneList.Main);
+            SceneManager.LoadScene(SceneList.Setting);
+            _gameOver = false;
         }
     }
 }
