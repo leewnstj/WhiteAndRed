@@ -6,19 +6,27 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SettingUIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _leaderBoardPanel;
+    [SerializeField] private GameObject[] _leaderBoardPanel;
 
     [SerializeField] private GameObject[] _objArr;
+    [SerializeField] private GameObject[] _heart;
 
     [SerializeField] private GameObject _dayEventObj;
+
+    [SerializeField] private TMP_InputField _changePassword;
+
+    [SerializeField] private TextMeshProUGUI _dayCntTex;
 
     private TextMeshProUGUI[] _nameTex;
     private TextMeshProUGUI[] _scoreTex;
 
     private FirebaseManager _firebaseManager;
+
+    
 
     private void Awake()
     {
@@ -45,6 +53,11 @@ public class SettingUIManager : MonoBehaviour
         }
         #endregion
 
+        _dayCntTex.text = $"Login for {_firebaseManager.UserData.LoginCnt} consecutive days";
+        for(int i = 0; i < _firebaseManager.UserData.LoginAmount; i++)
+        {
+            _heart[i].SetActive(true);
+        }
         DayCheck();
     }
 
@@ -78,19 +91,25 @@ public class SettingUIManager : MonoBehaviour
     }
 
     #region Button Event
-    public void BtnOn()
+    public void BtnOn(int i)
     {
-        _leaderBoardPanel.SetActive(true);
+        _leaderBoardPanel[i].SetActive(true);
     }
 
-    public void BtnOff()
+    public void BtnOff(int i)
     {
-        _leaderBoardPanel.SetActive(false);
+        _leaderBoardPanel[i].SetActive(false);
     }
 
     public void StartBtn()
     {
         SceneManager.LoadScene(SceneList.Main);
+    }
+
+    public void ChangePassword()
+    {
+        string value = _changePassword.text;
+        StartCoroutine(FirebaseManager.Instance.ChangePassword(value));
     }
     #endregion
 }

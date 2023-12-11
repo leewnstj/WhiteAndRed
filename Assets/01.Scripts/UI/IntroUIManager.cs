@@ -41,7 +41,6 @@ public class IntroUIManager : MonoBehaviour
 
         _loginBtn = transform.Find("Login").GetComponentInChildren<TextMeshProUGUI>();
         _signBtn = transform.Find("SignUP").GetComponentInChildren<TextMeshProUGUI>();
-
         _panel.SetActive(false);
         _nameObj.SetActive(false);
     }
@@ -111,7 +110,7 @@ public class IntroUIManager : MonoBehaviour
         {
 
             await FirebaseManager.Instance.LoadUserdata();
-            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("MM/dd/yyyy H:mm"));
+            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("t"));
             SceneMove();
         }
     }
@@ -123,13 +122,14 @@ public class IntroUIManager : MonoBehaviour
         }
         else
         {
-            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("MM/dd/yyyy H:mm"));
+            FirebaseManager.Instance.LastLoginTime(DateTime.Now.ToString("t"));
             SceneMove();
         }
     }
 
     private void SceneMove()
     {
+        FirebaseManager.Instance.LoginCheck();
         _isLogin = false;
         _isSignUP = false;
         _panel.SetActive(_isLogin || _isSignUP);

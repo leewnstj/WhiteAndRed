@@ -17,6 +17,8 @@ public class FirebaseUserData
     public string userName;
     public int userScore;
     public string lastLoginTime;
+    public int LoginCnt;
+    public int LoginAmount;
 
 }
 
@@ -152,6 +154,16 @@ public class FirebaseManager : MonoBehaviour
 
     }
 
+    public IEnumerator ChangePassword(string newPassword)
+    {
+        var task = _user.UpdatePasswordAsync(newPassword);
+        yield return new WaitUntil(() => task.IsCompleted);
+        if(task.Exception == null)
+        {
+            print("changed password");
+        }
+    }
+
     public void UserScore(int score)
     {
         if (_user == null)
@@ -176,6 +188,32 @@ public class FirebaseManager : MonoBehaviour
 
         SaveUserData();
 
+    }
+    
+    public void LoginCheck()
+    {
+        if (_user == null)
+        {
+            Debug.Log("NULL");
+            return;
+        }
+        if ((DateTime.Now - DateTime.Parse(FirebaseManager.Instance.UserData.lastLoginTime)).TotalSeconds > 1)
+        {
+            UserData.LoginAmount++;
+            if ((DateTime.Now - DateTime.Parse(FirebaseManager.Instance.UserData.lastLoginTime)).TotalMinutes > 1)
+            {
+                UserData.LoginCnt--;
+                if(UserData.LoginCnt < 1)
+                    UserData.LoginCnt = 1;
+                Debug.Log("Successasdf");
+            }
+            else
+            {
+                UserData.LoginCnt++;
+                Debug.Log("Success");
+            }
+            SaveUserData();
+        }
     }
 
     public async Task LoadUserdata()
